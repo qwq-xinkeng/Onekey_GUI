@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build and Release with Nuitka and Inno Setup
 
 on:
   push:
@@ -20,10 +20,12 @@ jobs:
 
       - name: Get package version from package.json
         id: get_version
-        uses: ahmadnassri/action-workflow-json-read@v1
-        with:
-          file: 'package.json'
-          key_path: 'version'
+        shell: powershell
+        run: |
+          $packageJson = Get-Content -Raw -Path package.json | ConvertFrom-Json
+          $version = $packageJson.version
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "Package version: $version"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -47,7 +49,7 @@ jobs:
             main.py
 
       - name: Set up Inno Setup
-        uses: crazy-max/ghaction-setup-inno-setup@v1
+        uses: crazy-max/ghaction-setup-inno-setup@v2
 
       - name: Create Inno Setup script
         shell: powershell
@@ -55,14 +57,17 @@ jobs:
           $iss_content = @"
           [Setup]
           AppName=Onekey GUI
-          AppVersion=${{ steps.get_version.outputs.value }}
+          AppVersion=${{ steps.get_version.outputs.VERSION }}
           DefaultDirName={autopf}\\Onekey GUI
           DefaultGroupName=Onekey GUI
-          OutputBaseFilename=Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}
+          OutputBaseFilename=Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}
           Compression=lzma2
           SolidCompression=yes
           WizardStyle=modern
           UninstallDisplayIcon={app}\\main.exe
+          WizardSmallImageFile=icon.bmp
+          WizardImageFile=icon.bmp
+
 
           [Tasks]
           Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
@@ -89,8 +94,8 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}.exe
-          tag_name: v${{ steps.get_version.outputs.value }}
+          files: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}.exe
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
           prerelease: false
           draft: false
         env:
@@ -99,6 +104,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}
-          path: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}.exe
+          name: Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}
+          path: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}.exe
           retention-days: 30
