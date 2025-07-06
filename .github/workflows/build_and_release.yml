@@ -47,7 +47,8 @@ jobs:
             --include-data-dir=src=src `
             --include-data-dir=web=web `
             --enable-plugin=anti-bloat `
-            --enable-plugin=implicit-imports
+            --enable-plugin=implicit-imports `
+            --assume-yes-for-downloads
 
       - name: Set up Inno Setup
         uses: crazy-max/ghaction-setup-containerd@v3
