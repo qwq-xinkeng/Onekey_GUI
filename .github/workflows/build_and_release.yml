@@ -1,4 +1,5 @@
 name: Build and Release
+
 on:
   push:
     branches:
@@ -40,15 +41,17 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --onefile --windows-disable-console --output-dir=dist `
+          python -m nuitka main.py --onefile --windows-disable-console `
+            --output-dir=dist `
             --windows-icon-from-ico=icon.ico `
-            --plugin-enable=flask `
             --include-data-dir=src=src `
             --include-data-dir=web=web `
-            main.py
+            --enable-plugin=anti-bloat `
+            --enable-plugin=implicit-imports
 
       - name: Set up Inno Setup
-        uses: crazy-max/ghaction-setup-containerd@v3
+        uses: crazy-max/ghaction-setup-inno-setup@v2
+
       - name: Create Inno Setup script
         shell: powershell
         run: |
@@ -72,8 +75,6 @@ jobs:
 
           [Files]
           Source: "dist\\main.exe"; DestDir: "{app}"; Flags: ignoreversion
-          Source: "dist\\web\\*"; DestDir: "{app}\\web"; Flags: ignoreversion recursesubdirs createallsubdirs
-          Source: "dist\\src\\*"; DestDir: "{app}\\src"; Flags: ignoreversion recursesubdirs createallsubdirs
           ; NOTE: Add other files and folders needed by your application here
 
           [Icons]
