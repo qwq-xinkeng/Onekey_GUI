@@ -1,0 +1,104 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get package version from package.json
+        id: get_version
+        uses: ahmadnassri/action-workflow-json-read@v1
+        with:
+          file: 'package.json'
+          key_path: 'version'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: "x64"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+      - name: Build executable with Nuitka
+        run: |
+          python -m nuitka --onefile --windows-disable-console --output-dir=dist `
+            --windows-icon-from-ico=icon.ico `
+            --plugin-enable=flask `
+            --include-data-dir=src=src `
+            --include-data-dir=web=web `
+            main.py
+
+      - name: Set up Inno Setup
+        uses: crazy-max/ghaction-setup-inno-setup@v1
+
+      - name: Create Inno Setup script
+        shell: powershell
+        run: |
+          $iss_content = @"
+          [Setup]
+          AppName=Onekey GUI
+          AppVersion=${{ steps.get_version.outputs.value }}
+          DefaultDirName={autopf}\\Onekey GUI
+          DefaultGroupName=Onekey GUI
+          OutputBaseFilename=Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}
+          Compression=lzma2
+          SolidCompression=yes
+          WizardStyle=modern
+          UninstallDisplayIcon={app}\\main.exe
+
+          [Tasks]
+          Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
+
+          [Files]
+          Source: "dist\\main.exe"; DestDir: "{app}"; Flags: ignoreversion
+          Source: "dist\\web\\*"; DestDir: "{app}\\web"; Flags: ignoreversion recursesubdirs createallsubdirs
+          Source: "dist\\src\\*"; DestDir: "{app}\\src"; Flags: ignoreversion recursesubdirs createallsubdirs
+          ; NOTE: Add other files and folders needed by your application here
+
+          [Icons]
+          Name: "{group}\\Onekey GUI"; Filename: "{app}\\main.exe"
+          Name: "{autodesktop}\\Onekey GUI"; Filename: "{app}\\main.exe"; Tasks: desktopicon
+
+          [Run]
+          Filename: "{app}\\main.exe"; Description: "{cm:LaunchProgram,Onekey GUI}"; Flags: nowait postinstall skipifsilent
+          "@
+          $iss_content | Out-File -FilePath "setup.iss" -Encoding utf8
+
+      - name: Compile Inno Setup installer
+        run: |
+          iscc setup.iss
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}.exe
+          tag_name: v${{ steps.get_version.outputs.value }}
+          prerelease: false
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}
+          path: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.value }}.exe
+          retention-days: 30
