@@ -4,11 +4,14 @@
   "description": "一个Steam仓库清单下载器",
   "main": "index.js",
   "scripts": {
+    "start": "python main_o.py",
+    "web": "python main.py",
+    "install": "pip install -r requirements.txt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ikunshare/Onekey.git"
+    "url": "git+https://github.com/qwq-xinkeng/Onekey.git"
   },
   "keywords": [
     "Onekey"
@@ -16,7 +19,7 @@
   "author": "ikun0014",
   "license": "GPL-2.0",
   "bugs": {
-    "url": "https://github.com/ikunshare/Onekey/issues"
+    "url": "https://github.com/qwq-xinkeng/Onekey/issues"
   },
-  "homepage": "https://github.com/ikunshare/Onekey#readme"
+  "homepage": "https://github.com/qwq-xinkeng/Onekey#readme"
 }

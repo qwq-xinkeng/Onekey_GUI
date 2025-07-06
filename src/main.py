@@ -154,6 +154,52 @@ class OnekeyApp:
         finally:
             await self.client.close()
 
+    async def run_with_tool(self, app_id: str, tool_type: str, version_lock: bool = False):
+        """为Web版本提供的运行方法"""
+        try:
+            detector = RegionDetector(self.client, self.logger)
+            is_cn, country = await detector.check_cn()
+            self.github.is_cn = is_cn
+
+            await self.github.check_rate_limit()
+
+            self.logger.info(f"正在处理游戏 {app_id}...")
+            depot_data, depot_map = await self.handle_depot_files(app_id)
+
+            if not depot_data:
+                self.logger.error("未找到此游戏的清单")
+                return False
+
+            self.logger.info(f"选择的解锁工具: {tool_type}")
+
+            if tool_type == "steamtools":
+                from .tools.steamtools import SteamTools
+                tool = SteamTools(self.config.steam_path)
+                success = await tool.setup(
+                    depot_data, app_id, depot_map=depot_map, version_lock=version_lock
+                )
+            elif tool_type == "greenluma":
+                from .tools.greenluma import GreenLuma
+                tool = GreenLuma(self.config.steam_path)
+                success = await tool.setup(depot_data, app_id)
+            else:
+                self.logger.error("无效的工具选择")
+                return False
+
+            if success:
+                self.logger.info("游戏解锁配置成功！")
+                self.logger.info("重启Steam后生效")
+                return True
+            else:
+                self.logger.error("配置失败")
+                return False
+
+        except Exception as e:
+            self.logger.error(f"运行错误: {e}")
+            return False
+        finally:
+            await self.client.close()
+
 
 async def main():
     """程序入口"""

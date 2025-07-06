@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onekey Steam解锁工具</title>
+    
+    <!-- Material Design 3 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@material/web@1.0.1/all.css" rel="stylesheet">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部应用栏 -->
+        <header class="app-bar">
+            <div class="app-bar-content">
+                <span class="material-icons app-icon">games</span>
+                <h1 class="app-title">Onekey Steam解锁工具</h1>
+                <div class="app-version">v0.1 Web GUI</div>
+                <a href="/settings" class="btn btn-text settings-link">
+                    <span class="material-icons">settings</span>
+                    <span class="settings-text">设置</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 配置状态卡片 -->
+            <div class="card config-card">
+                <div class="card-header">
+                    <span class="material-icons">settings</span>
+                    <h2>配置状态</h2>
+                </div>
+                <div class="card-content">
+                    <div class="config-status" id="configStatus">
+                        <div class="loading">正在检查配置...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏解锁卡片 -->
+            <div class="card unlock-card">
+                <div class="card-header">
+                    <span class="material-icons">lock_open</span>
+                    <h2>游戏解锁</h2>
+                </div>
+                <div class="card-content">
+                    <form id="unlockForm" class="unlock-form">
+                        <div class="input-group">
+                            <label for="appId" class="input-label">Steam App ID</label>
+                            <input type="text" id="appId" name="appId" class="text-field" 
+                                   placeholder="请输入游戏的App ID" required>
+                            <div class="input-helper">例如: 730 (CS2), 570 (Dota 2)</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">解锁工具</label>
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="toolType" value="steamtools" checked>
+                                    <span class="radio-button"></span>
+                                    <span class="radio-label">SteamTools</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="toolType" value="greenluma">
+                                    <span class="radio-button"></span>
+                                    <span class="radio-label">GreenLuma</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="input-group" id="versionLockGroup">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="versionLock" name="versionLock">
+                                <span class="checkbox-button"></span>
+                                <span class="checkbox-label">锁定版本</span>
+                            </label>
+                            <div class="input-helper">推荐在选择仓库SteamAutoCracks/ManifestHub时使用</div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary" id="unlockBtn">
+                                <span class="material-icons">play_arrow</span>
+                                开始解锁
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">
+                                <span class="material-icons">refresh</span>
+                                重置
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 进度日志卡片 -->
+            <div class="card progress-card">
+                <div class="card-header">
+                    <span class="material-icons">timeline</span>
+                    <h2>执行日志</h2>
+                    <div class="card-actions">
+                        <button class="btn btn-text" id="clearLogBtn">
+                            <span class="material-icons">clear_all</span>
+                            清空
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-placeholder">
+                            <span class="material-icons">info</span>
+                            <p>等待任务开始...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <!-- 项目介绍卡片 -->
+                <div class="project-info-card">
+                    <div class="project-header">
+                        <div class="project-logo">
+                            <span class="material-icons">extension</span>
+                        </div>
+                        <div class="project-details">
+                            <h3 class="project-name">Onekey Steam解锁工具</h3>
+                            <p class="project-subtitle">一键式Steam游戏解锁解决方案</p>
+                        </div>
+                        <div class="project-version">
+                            <span class="version-label">v0.1</span>
+                            <span class="version-type">Web GUI</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-description">
+                        <p>Onekey是一个强大的Steam游戏解锁工具，专为简化游戏清单下载和配置而设计。通过现代化的Web界面，用户可以轻松管理Steam游戏的解锁过程，支持SteamTools和GreenLuma两种主流解锁方案。</p>
+                    </div>
+                    
+                    <div class="project-links">
+                        <a href="https://github.com/qwq-xinkeng/Onekey_GUI" target="_blank" class="project-link github">
+                            <span class="material-icons">code</span>
+                            <div class="link-content">
+                                <span class="link-title">GitHub 仓库</span>
+                                <span class="link-url">github.com/qwq-xinkeng/Onekey_GUI</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/qwq-xinkeng/Onekey_GUI/releases" target="_blank" class="project-link releases">
+                            <span class="material-icons">file_download</span>
+                            <div class="link-content">
+                                <span class="link-title">下载发布版</span>
+                                <span class="link-url">获取最新版本</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/qwq-xinkeng" target="_blank" class="project-link author">
+                            <span class="material-icons">person</span>
+                            <div class="link-content">
+                                <span class="link-title">作者主页</span>
+                                <span class="link-url">github.com/qwq-xinkeng</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/qwq-xinkeng/Onekey_GUI/issues" target="_blank" class="project-link issues">
+                            <span class="material-icons">bug_report</span>
+                            <div class="link-content">
+                                <span class="link-title">问题反馈</span>
+                                <span class="link-url">报告Bug或建议</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 技术信息 -->
+                <div class="tech-info">
+                    <div class="tech-header">
+                        <span class="material-icons">code</span>
+                        <h4>技术信息</h4>
+                    </div>
+                    <div class="tech-content">
+                        <div class="tech-item">
+                            <strong>🐍 后端技术</strong>
+                            <span>Python 3.8+ • Flask • AsyncIO • HTTPX</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong>🌐 前端技术</strong>
+                            <span>HTML5 • CSS3 • JavaScript ES6+ • Material Design 3.0</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong>🔧 支持工具</strong>
+                            <span>SteamTools • GreenLuma</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong>📋 开源协议</strong>
+                            <span>GPL 2.0 License • 完全开源免费</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 使用须知 -->
+                <div class="usage-notice">
+                    <div class="notice-header">
+                        <span class="material-icons">info</span>
+                        <h4>使用须知</h4>
+                    </div>
+                    <div class="notice-content">
+                        <p><strong>⚠️ 重要提醒</strong> - 本工具完全免费开源，严禁任何形式的商业化使用或倒卖</p>
+                        <p><strong>�️ 系统要求</strong> - 请确保已安装Windows 10/11并正确配置Steam客户端</p>
+                        <p><strong>🛠️ 工具准备</strong> - 使用前请先安装SteamTools或GreenLuma解锁工具</p>
+                        <p><strong>🔒 免责声明</strong> - 本工具仅供学习交流使用，使用者需自行承担相关风险</p>
+                        <p><strong>⭐ 支持项目</strong> - 如果此工具对您有帮助，欢迎在GitHub上给项目点Star支持</p>
+                    </div>
+                </div>
+                
+                <!-- 版权信息 -->
+                <div class="copyright">
+                    <p>© 2025 Onekey Steam解锁工具 • 作者：qwq-xinkeng • 基于GPL 2.0许可证开源</p>
+                    <p>项目地址：<a href="https://github.com/qwq-xinkeng/Onekey_GUI" target="_blank">https://github.com/qwq-xinkeng/Onekey_GUI</a></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="snackbar" class="snackbar">
+        <div class="snackbar-content">
+            <span id="snackbarMessage"></span>
+            <button id="snackbarClose" class="snackbar-action">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 脚本 -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/project-info.js') }}"></script>
+</body>
+</html>

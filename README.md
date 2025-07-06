@@ -1,79 +1,85 @@
-<div align="center">
+# Onekey GUI 使用说明
 
-![Onekey](https://socialify.git.ci/ikunshare/Onekey/image?description=1&font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pulls=1&stargazers=1&theme=Auto)
+## 简介
 
-![GitHub Repo Size](https://img.shields.io/github/repo-size/ikunshare/Onekey?style=for-the-badge)
-[![GitHub Release (with filter)](https://img.shields.io/github/v/release/ikunshare/Onekey?style=for-the-badge)](https://github.com/ikunshare/Onekey/releases/latest)
-[![GitHub All Releases](https://img.shields.io/github/downloads/ikunshare/Onekey/total?style=for-the-badge&color=violet)](https://github.com/ikunshare/Onekey/releases)
-[![GitHub License](https://img.shields.io/github/license/ikunshare/Onekey?style=for-the-badge)](https://github.com/ikunshare/Onekey/blob/main/LICENSE)
+此项目基于原项目[Onekey](https://github.com/ikunshare/Onekey/ "Onekey项目地址")添加GUI制作 UI由Flask驱动
 
-[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
+## 功能特性
 
-</div>
+- 🎨 **Material Design 3.0** - 现代化的界面设计
+- 🌐 **Web 界面** - 支持任何现代浏览器访问
+- 📱 **响应式设计** - 完美适配桌面和移动设备
+- 🔄 **实时进度** - WebSocket 实时显示任务执行进度
+- ⚙️ **配置检查** - 自动检查配置状态
+- 📊 **日志显示** - 实时显示详细的操作日志
 
 
-## Onekey
-Onekey Steam Depot Manifest Downloader  
-对本软件有意见的 
-欢迎拨打中华人民共和国公安部门报警电话：110进行报警
+## 安装依赖
 
-## 先让我挂些人
-- 沧海颐粟，早期倒卖大手子，现在不知道跑哪了，通过一点手段查到在江西
-- 玩家资源站，贼喊捉贼笑传，随便改改别人软件的名字就是自己的，还去报官了
+在进行开发之前，请确保安装了所有必要的依赖：
 
-## 使用方法
-去Releases处下载最新的发布，并且安装好SteamTools或者GreenLuma  
-然后打开Onekey输入App ID即可使用
-
-## 开发
-本程序使用Python编程语言开发   
-要求环境:    
-1.Python 3.10及以上   
-2.Windows 10及以上   
-3.使用Git进行版本管理   
-
-1.克隆项目到本地 
-
-```
-git clone https://github.com/ikunshare/Onekey
-```
-
-2.安装依赖
-
-```
+```bash
 pip install -r requirements.txt
 ```
 
-## 项目协议
- 本项目基于 GPL-2.0 许可证发行，以下协议是对于 GPL-2.0 原协议的补充，如有冲突，以以下协议为准。
+## 使用方法
 
- 词语约定: “使用者”指签署本协议的使用者;“版权数据”指包括但不限于图像、音频、名字等在内的他人拥有所属版权的数据。
+1. 启动程序后，浏览器会自动打开 `http://localhost:5000`
+2. 检查配置状态，确保 Steam 路径等配置正确
+3. 输入要解锁的游戏 App ID
+4. 选择解锁工具（SteamTools 或 GreenLuma）
+5. 如果选择 SteamTools，可以选择是否锁定版本
+6. 点击"开始解锁"按钮
+7. 在日志区域实时查看任务执行进度
+8. 任务完成后，重启 Steam 使配置生效
 
- 本项目的数据来源原理是从Steam官方的CDN服务器中拉取游戏清单数据，经过对数据简单地筛选与合并后进行展示，因此本项目不对数据的准确性负责。
- 使用本项目的过程中可能会产生版权数据，对于这些版权数据，本项目不拥有它们的所有权，为了避免造成侵权，使用者务必在24 小时内清除使用本项目的过程中所产生的版权数据。
- 由于使用本项目产生的包括由于本协议或由于使用或无法使用本项目而引起的任何性质的任何直接、间接、特殊、偶然或结果性损害（包括但不限于因商誉损失、停工、计算机故障或故障引起的损害赔偿，或任何及所有其他商业损害或损失）由使用者负责。
- 本项目完全免费，且开源发布于 GitHub 面向全世界人用作对技术的学习交流，本项目不对项目内的技术可能存在违反当地法律法规的行为作保证，禁止在违反当地法律法规的情况下使用本项目，对于使用者在明知或不知当地法律法规不允许的情况下使用本项目所造成的任何违法违规行为由使用者承担，本项目不承担由此造成的任何直接、间接、特殊、偶然或结果性责任。
- 而且，本项目已禁止使用于商业用途，以及不得进行未经允许的二次修改，否则必须同时发布源代码。
- 若你使用了本项目，将代表你接受以上协议。
+## 浏览器兼容性
 
- Steam正版平台不易，请尊重版权，支持正版。  
- 本项目仅用于对技术可行性的探索及研究，不接受任何商业（包括但不限于广告等）合作。  
+支持所有现代浏览器：
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
 
-## Star 趋势图
+## 端口配置
 
- [![Stargazers over time](https://starchart.cc/ikunshare/Onekey.svg)](https://starchart.cc/ikunshare/Onekey)
+默认运行在 `http://localhost:5000`，如需更改端口，请修改 `web/app.py` 文件中的端口设置。
 
-## 贡献者
+## 故障排除
 
- <a href="https://github.com/ikunshare/Onekey/graphs/contributors">
-   <img src="https://contrib.rocks/image?repo=ikunshare/Onekey" />
- </a>
+### 常见问题
 
-## 常见问题解答（FAQ）
-查看 [FAQ](https://ikunshare.top/d/49) 获取常见问题的解答。
+1. **无法访问 Web 界面**
+   - 检查防火墙设置
+   - 确认端口 5000 未被占用
+   - 尝试使用 `http://127.0.0.1:5000`
 
-## 社区和支持
-加入我们的社区，参与讨论和支持: 
-- [GitHub Discussions](https://github.com/ikunshare/Onekey/discussions)
-- [Telegram](https://t.me/ikunshare_qun)
-- [QQ](https://qm.qq.com/q/NPRVbglteK)
+2. **依赖安装失败**
+   - 检查网络连接
+   - 尝试使用国内 pip 镜像源
+   - 确认 Python 版本 >= 3.8
+
+3. **配置错误**
+   - 检查 `config.json` 文件格式
+   - 确认 Steam 安装路径正确
+   - 检查 GitHub Token 配置
+
+## 开发说明
+
+项目结构：
+```
+web/
+├── app.py              # Flask 应用主文件
+├── templates/
+│   └── index.html      # HTML 模板
+└── static/
+    ├── css/
+    │   └── style.css   # 样式文件
+    └── js/
+        └── app.js      # 前端 JavaScript
+```
+## 说明
+此项目没有对Onekey功能性代码做出任何更改 原项目的所有文件都在这个项目里 除了main.py被改名为main_o.py外连名字都没有改 所以如有功能性问题请先尝试在原版Onekey复现 如复现失败再与我反馈 谢谢
+
+## 免责声明
+本项目部分代码和此README的大部分使用AI编写 若存在侵权请与我联系

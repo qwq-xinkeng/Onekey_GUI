@@ -1,0 +1,317 @@
+/* 设置页面专用样式 */
+
+.settings-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 设置区域 */
+.settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 8px 0;
+}
+
+/* 路径输入组 */
+.path-input-group {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.path-input-group .text-field {
+    flex: 1;
+}
+
+.path-input-group .btn {
+    white-space: nowrap;
+    align-self: stretch;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: var(--md-sys-shape-corner-small);
+    background-color: var(--md-sys-color-surface-variant);
+    border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.status-indicator.success {
+    background-color: var(--md-sys-color-success-container);
+    border-color: var(--md-sys-color-success);
+}
+
+.status-indicator.error {
+    background-color: var(--md-sys-color-error-container);
+    border-color: var(--md-sys-color-error);
+}
+
+.status-indicator.warning {
+    background-color: var(--md-sys-color-warning-container);
+    border-color: var(--md-sys-color-warning);
+}
+
+.status-indicator .status-icon {
+    font-size: 20px;
+}
+
+.status-indicator.success .status-icon {
+    color: var(--md-sys-color-success);
+}
+
+.status-indicator.error .status-icon {
+    color: var(--md-sys-color-error);
+}
+
+.status-indicator.warning .status-icon {
+    color: var(--md-sys-color-warning);
+}
+
+.status-text {
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface);
+}
+
+/* 复选框增强 */
+.checkbox-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.checkbox-description {
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.4;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        justify-content: center;
+    }
+}
+
+/* 配置状态网格 */
+.config-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.status-card {
+    background-color: var(--md-sys-color-surface);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.status-card:hover {
+    border-color: var(--md-sys-color-outline);
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.status-card.success {
+    border-color: var(--md-sys-color-success);
+    background-color: var(--md-sys-color-success-container);
+}
+
+.status-card.error {
+    border-color: var(--md-sys-color-error);
+    background-color: var(--md-sys-color-error-container);
+}
+
+.status-card.warning {
+    border-color: var(--md-sys-color-warning);
+    background-color: var(--md-sys-color-warning-container);
+}
+
+.status-card-icon {
+    font-size: 24px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.status-card.success .status-card-icon {
+    color: var(--md-sys-color-success);
+}
+
+.status-card.error .status-card-icon {
+    color: var(--md-sys-color-error);
+}
+
+.status-card.warning .status-card-icon {
+    color: var(--md-sys-color-warning);
+}
+
+.status-card-content {
+    flex: 1;
+}
+
+.status-card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+    margin-bottom: 4px;
+}
+
+.status-card-description {
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.3;
+}
+
+/* 帮助链接 */
+.helper-link {
+    color: var(--md-sys-color-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    font-size: 12px;
+    transition: color 0.2s ease;
+}
+
+.helper-link:hover {
+    color: var(--md-sys-color-primary);
+    text-decoration: underline;
+}
+
+.helper-link .material-icons {
+    font-size: 14px;
+}
+
+/* 对话框样式 */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.dialog-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog {
+    background-color: var(--md-sys-color-surface-container-high);
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    box-shadow: var(--md-sys-elevation-level5);
+    max-width: 400px;
+    width: 90%;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.dialog-overlay.show .dialog {
+    transform: scale(1);
+}
+
+.dialog-header {
+    padding: 24px 24px 16px;
+}
+
+.dialog-header h3 {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+    margin: 0;
+}
+
+.dialog-content {
+    padding: 0 24px 24px;
+}
+
+.dialog-content p {
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.dialog-actions {
+    padding: 8px 24px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .settings-main {
+        padding: 16px;
+    }
+    
+    .path-input-group {
+        flex-direction: column;
+    }
+    
+    .config-status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Token 可见性切换 */
+.token-visible {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+/* 加载动画 */
+.settings-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.settings-loading::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--md-sys-color-outline);
+    border-top: 2px solid var(--md-sys-color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}

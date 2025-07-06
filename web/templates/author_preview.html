@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作者信息预览 - Onekey Steam解锁工具</title>
+    
+    <!-- Material Design 3 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: var(--md-sys-color-surface);
+        }
+        .preview-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .preview-title {
+            text-align: center;
+            color: var(--md-sys-color-on-surface);
+            margin-bottom: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1 class="preview-title">作者信息区域预览</h1>
+        
+        <!-- 作者信息卡片 -->
+        <div class="author-info-card">
+            <div class="author-header">
+                <div class="author-avatar">
+                    <span class="material-icons">person</span>
+                </div>
+                <div class="author-details">
+                    <h3 class="author-name">ikun0014</h3>
+                    <p class="author-title">Onekey 开发者</p>
+                </div>
+                <div class="project-version">
+                    <span class="version-label">v2.0</span>
+                    <span class="version-type">Web GUI</span>
+                </div>
+            </div>
+            
+            <div class="author-description">
+                <p>一个专注于Steam游戏解锁工具开发的程序员，致力于为用户提供简单易用的游戏管理工具。</p>
+            </div>
+            
+            <div class="project-stats">
+                <div class="stat-item">
+                    <span class="material-icons">code</span>
+                    <div class="stat-content">
+                        <span class="stat-label">项目语言</span>
+                        <span class="stat-value">Python + Flask</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="material-icons">license</span>
+                    <div class="stat-content">
+                        <span class="stat-label">开源协议</span>
+                        <span class="stat-value">GPL 2.0</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="material-icons">update</span>
+                    <div class="stat-content">
+                        <span class="stat-label">最后更新</span>
+                        <span class="stat-value">2025.07.05</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://github.com/ikunshare/Onekey" target="_blank" class="social-link github">
+                    <span class="material-icons">open_in_new</span>
+                    <span>GitHub 仓库</span>
+                </a>
+                <a href="https://ikunshare.top" target="_blank" class="social-link website">
+                    <span class="material-icons">language</span>
+                    <span>官方网站</span>
+                </a>
+                <a href="https://github.com/ikunshare/Onekey/issues" target="_blank" class="social-link issues">
+                    <span class="material-icons">bug_report</span>
+                    <span>问题反馈</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 免责声明 -->
+        <div class="disclaimer">
+            <div class="disclaimer-header">
+                <span class="material-icons">info</span>
+                <h4>重要说明</h4>
+            </div>
+            <div class="disclaimer-content">
+                <p><strong>⚠️ 严禁倒卖</strong> - 本工具完全免费，严禁任何形式的商业化使用</p>
+                <p><strong>📋 使用须知</strong> - 请确保已安装Windows 10/11并正确配置Steam、SteamTools或GreenLuma</p>
+                <p><strong>🔒 责任声明</strong> - 本工具仅供学习交流使用，使用者需自行承担风险</p>
+                <p><strong>💎 支持项目</strong> - 如果此工具对您有帮助，请在GitHub上给项目一个Star⭐</p>
+            </div>
+        </div>
+        
+        <!-- 版权信息 -->
+        <div class="copyright">
+            <p>© 2025 Onekey Steam解锁工具 | 基于GPL 2.0许可证开源</p>
+            <p>本程序源代码基于GPL 2.0许可证开放于GitHub</p>
+        </div>
+    </div>
+</body>
+</html>

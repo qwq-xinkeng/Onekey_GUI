@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - Onekey Steam解锁工具</title>
+    
+    <!-- Material Design 3 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@material/web@1.0.1/all.css" rel="stylesheet">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部应用栏 -->
+        <header class="app-bar">
+            <div class="app-bar-content">
+                <button class="btn btn-text" onclick="goBack()">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <span class="material-icons app-icon">settings</span>
+                <h1 class="app-title">设置</h1>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content settings-main">
+            <!-- GitHub 配置卡片 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="material-icons">code</span>
+                    <h2>GitHub 配置</h2>
+                </div>
+                <div class="card-content">
+                    <div class="settings-section">
+                        <div class="input-group">
+                            <label for="githubToken" class="input-label">GitHub Personal Token</label>
+                            <input type="password" id="githubToken" class="text-field" 
+                                   placeholder="请输入GitHub Personal Token">
+                            <div class="input-helper">
+                                用于提高GitHub API请求限制，避免下载失败。
+                                <a href="https://github.com/settings/tokens" target="_blank" class="helper-link">
+                                    <span class="material-icons">open_in_new</span>
+                                    如何获取Token
+                                </a>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <button type="button" id="toggleToken" class="btn btn-text">
+                                <span class="material-icons" id="tokenVisibilityIcon">visibility</span>
+                                <span id="tokenVisibilityText">显示Token</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steam 配置卡片 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="material-icons">games</span>
+                    <h2>Steam 配置</h2>
+                </div>
+                <div class="card-content">
+                    <div class="settings-section">
+                        <div class="input-group">
+                            <label for="steamPath" class="input-label">Steam 安装路径</label>
+                            <div class="path-input-group">
+                                <input type="text" id="steamPath" class="text-field" 
+                                       placeholder="留空自动检测，或手动输入Steam安装路径">
+                                <button type="button" id="detectSteamPath" class="btn btn-secondary">
+                                    <span class="material-icons">search</span>
+                                    自动检测
+                                </button>
+                            </div>
+                            <div class="input-helper">
+                                程序会尝试自动检测Steam安装路径，如果检测失败请手动输入。
+                                通常位于：C:\Program Files (x86)\Steam
+                            </div>
+                        </div>
+                        <div class="status-indicator" id="steamPathStatus">
+                            <span class="material-icons status-icon">info</span>
+                            <span class="status-text">等待检测...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 应用程序配置卡片 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="material-icons">tune</span>
+                    <h2>应用程序配置</h2>
+                </div>
+                <div class="card-content">
+                    <div class="settings-section">
+                        <div class="setting-item">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="debugMode">
+                                <span class="checkbox-button"></span>
+                                <div class="checkbox-content">
+                                    <span class="checkbox-label">调试模式</span>
+                                    <span class="checkbox-description">启用详细的调试日志输出</span>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="loggingFiles">
+                                <span class="checkbox-button"></span>
+                                <div class="checkbox-content">
+                                    <span class="checkbox-label">保存日志文件</span>
+                                    <span class="checkbox-description">将日志保存到文件中，便于问题排查</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮卡片 -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="action-buttons">
+                        <button type="button" id="saveConfig" class="btn btn-primary">
+                            <span class="material-icons">save</span>
+                            保存配置
+                        </button>
+                        <button type="button" id="resetConfig" class="btn btn-secondary">
+                            <span class="material-icons">restore</span>
+                            重置为默认值
+                        </button>
+                        <button type="button" id="testConfig" class="btn btn-secondary">
+                            <span class="material-icons">check_circle</span>
+                            测试配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 配置信息显示卡片 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="material-icons">info</span>
+                    <h2>配置状态</h2>
+                </div>
+                <div class="card-content">
+                    <div class="config-status-grid" id="configStatusGrid">
+                        <div class="loading">正在加载配置状态...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <!-- 项目介绍卡片 -->
+                <div class="project-info-card">
+                    <div class="project-header">
+                        <div class="project-logo">
+                            <span class="material-icons">extension</span>
+                        </div>
+                        <div class="project-details">
+                            <h3 class="project-name">Onekey Steam解锁工具</h3>
+                            <p class="project-subtitle">一键式Steam游戏解锁解决方案</p>
+                        </div>
+                        <div class="project-version">
+                            <span class="version-label">v2.0</span>
+                            <span class="version-type">Web GUI</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-description">
+                        <p>Onekey是一个强大的Steam游戏解锁工具，专为简化游戏清单下载和配置而设计。通过现代化的Web界面，用户可以轻松管理Steam游戏的解锁过程，支持SteamTools和GreenLuma两种主流解锁方案。</p>
+                    </div>
+                    
+                    <div class="project-links">
+                        <a href="https://github.com/qwq-xinkeng/Onekey_GUI" target="_blank" class="project-link github">
+                            <span class="material-icons">code</span>
+                            <div class="link-content">
+                                <span class="link-title">GitHub 仓库</span>
+                                <span class="link-url">github.com/qwq-xinkeng/Onekey_GUI</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/qwq-xinkeng/Onekey_GUI/releases" target="_blank" class="project-link releases">
+                            <span class="material-icons">file_download</span>
+                            <div class="link-content">
+                                <span class="link-title">下载发布版</span>
+                                <span class="link-url">获取最新版本</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/qwq-xinkeng" target="_blank" class="project-link author">
+                            <span class="material-icons">person</span>
+                            <div class="link-content">
+                                <span class="link-title">作者主页</span>
+                                <span class="link-url">github.com/qwq-xinkeng</span>
+                            </div>
+                        </a>
+                        <a href="https://github.com/qwq-xinkeng/Onekey_GUI/issues" target="_blank" class="project-link issues">
+                            <span class="material-icons">bug_report</span>
+                            <div class="link-content">
+                                <span class="link-title">问题反馈</span>
+                                <span class="link-url">报告Bug或建议</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 配置说明 -->
+                <div class="config-guide">
+                    <div class="guide-header">
+                        <span class="material-icons">settings</span>
+                        <h4>配置指南</h4>
+                    </div>
+                    <div class="guide-content">
+                        <div class="guide-item">
+                            <strong>🔑 GitHub Token配置</strong>
+                            <span>提高API请求限制，避免下载失败（推荐配置）</span>
+                        </div>
+                        <div class="guide-item">
+                            <strong>🎮 Steam路径设置</strong>
+                            <span>程序会自动检测Steam安装路径，检测失败时需手动设置</span>
+                        </div>
+                        <div class="guide-item">
+                            <strong>📝 日志配置</strong>
+                            <span>建议启用日志文件功能，便于问题排查和调试</span>
+                        </div>
+                        <div class="guide-item">
+                            <strong>💾 配置管理</strong>
+                            <span>所有配置保存在项目根目录的config.json文件中</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 版权信息 -->
+                <div class="copyright">
+                    <p>© 2025 Onekey Steam解锁工具 • 作者：qwq-xinkeng • 基于GPL 2.0许可证开源</p>
+                    <p>项目地址：<a href="https://github.com/qwq-xinkeng/Onekey_GUI" target="_blank">https://github.com/qwq-xinkeng/Onekey_GUI</a></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="confirmDialog" class="dialog-overlay">
+        <div class="dialog">
+            <div class="dialog-header">
+                <h3 id="dialogTitle">确认操作</h3>
+            </div>
+            <div class="dialog-content">
+                <p id="dialogMessage">确定要执行此操作吗？</p>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" id="dialogCancel" class="btn btn-text">取消</button>
+                <button type="button" id="dialogConfirm" class="btn btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="snackbar" class="snackbar">
+        <div class="snackbar-content">
+            <span id="snackbarMessage"></span>
+            <button id="snackbarClose" class="snackbar-action">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 脚本 -->
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/project-info.js') }}"></script>
+</body>
+</html>
