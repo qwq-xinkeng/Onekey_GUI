@@ -50,7 +50,7 @@ jobs:
             --enable-plugin=implicit-imports
 
       - name: Set up Inno Setup
-        uses: crazy-max/ghaction-setup-inno-setup@v2
+        uses: crazy-max/ghaction-setup-containerd@v3
 
       - name: Create Inno Setup script
         shell: powershell
