@@ -1,9 +1,11 @@
 name: Build and Release Executable
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  # 当一个 Release 被创建、发布或标记为预发布时触发 (推荐方式)
+  release:
+    types: [created, published, prereleased] 
+
+  # 保留手动触发工作流的选项
   workflow_dispatch:
 
 jobs:
