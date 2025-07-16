@@ -1,109 +1,63 @@
-name: Build and Release
+name: Build and Release Executable
 
 on:
   push:
-    branches:
-      - main
     tags:
-      - "v*"
+      - 'v*.*.*'
   workflow_dispatch:
 
 jobs:
   build:
-    permissions:
-      contents: write
+    name: Build on Windows
     runs-on: windows-latest
+
+    env:
+      SCRIPT_MAIN_NAME: main.py
+      OUTPUT_NAME: OneKey-GUI
+      ICON_FILE: icon.ico
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get package version from package.json
-        id: get_version
-        shell: powershell
-        run: |
-          $packageJson = Get-Content -Raw -Path package.json | ConvertFrom-Json
-          $version = $packageJson.version
-          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Host "Package version: $version"
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-          architecture: "x64"
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
           pip install nuitka
+          pip install -r requirements.txt
+        shell: bash
 
-      - name: Build executable with Nuitka
+      - name: Run Nuitka
         run: |
-          python -m nuitka main.py --onefile --windows-disable-console `
-            --output-dir=dist `
-            --windows-icon-from-ico=icon.ico `
-            --include-data-dir=src=src `
-            --include-data-dir=web=web `
-            --enable-plugin=anti-bloat `
-            --enable-plugin=implicit-imports `
-            --assume-yes-for-downloads
-
-      - name: Set up Inno Setup
-        uses: crazy-max/ghaction-setup-containerd@v3
-
-      - name: Create Inno Setup script
+          nuitka --onefile `
+                 --output-filename=${{ env.OUTPUT_NAME }} `
+                 --output-dir=dist `
+                 --assume-yes-for-downloads `
+                 --include-data-dir=./web/templates=web/templates `
+                 --include-data-files=${{ env.ICON_FILE }}=${{ env.ICON_FILE }} `
+                 --windows-icon-from-ico=${{ env.ICON_FILE }} `
+                 --include-data-dir=./web/static=web/static `
+                 "${{ env.SCRIPT_MAIN_NAME }}"
         shell: powershell
+
+      - name: Package executable into a zip file
         run: |
-          $iss_content = @"
-          [Setup]
-          AppName=Onekey GUI
-          AppVersion=${{ steps.get_version.outputs.VERSION }}
-          DefaultDirName={autopf}\\Onekey GUI
-          DefaultGroupName=Onekey GUI
-          OutputBaseFilename=Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}
-          Compression=lzma2
-          SolidCompression=yes
-          WizardStyle=modern
-          UninstallDisplayIcon={app}\\main.exe
-          WizardSmallImageFile=icon.bmp
-          WizardImageFile=icon.bmp
+          $zipFileName = "${{ env.OUTPUT_NAME }}-${{ github.ref_name }}.zip"
+          Compress-Archive -Path dist/${{ env.OUTPUT_NAME }}.exe -DestinationPath $zipFileName
+          echo "ASSET_PATH=$zipFileName" >> $env:GITHUB_ENV
+        shell: powershell
 
-
-          [Tasks]
-          Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
-
-          [Files]
-          Source: "dist\\main.exe"; DestDir: "{app}"; Flags: ignoreversion
-          ; NOTE: Add other files and folders needed by your application here
-
-          [Icons]
-          Name: "{group}\\Onekey GUI"; Filename: "{app}\\main.exe"
-          Name: "{autodesktop}\\Onekey GUI"; Filename: "{app}\\main.exe"; Tasks: desktopicon
-
-          [Run]
-          Filename: "{app}\\main.exe"; Description: "{cm:LaunchProgram,Onekey GUI}"; Flags: nowait postinstall skipifsilent
-          "@
-          $iss_content | Out-File -FilePath "setup.iss" -Encoding utf8
-
-      - name: Compile Inno Setup installer
-        run: |
-          iscc setup.iss
-
-      - name: Release
+      - name: Create Release and Upload Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}.exe
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
-          prerelease: false
-          draft: false
+          files: ${{ env.ASSET_PATH }}
+          name:  ${{ github.ref_name }}
+          body: |
+            Automated release ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}
-          path: Output/Onekey_GUI_Installer_v${{ steps.get_version.outputs.VERSION }}.exe
-          retention-days: 30
