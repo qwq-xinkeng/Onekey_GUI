@@ -81,16 +81,16 @@ def create_system_tray():
                         image = image.resize((32, 32), Image.Resampling.LANCZOS)
                     return image
                 
-                # 如果都没有图标文件，创建最简单的图标
+                # 如果都没有图标文件，使用简单的纯色图标
                 if show_console:
-                    print("未找到图标文件，使用默认图标")
-                return Image.new('RGBA', (32, 32), color=(30, 136, 229, 255))
+                    print("未找到图标文件，使用默认纯色图标")
+                return Image.new('RGBA', (32, 32), color=(103, 80, 164, 255))
                 
             except Exception as e:
                 if show_console:
                     print(f"加载图标失败: {e}")
-                # 如果所有方法都失败，创建最简单的图标
-                return Image.new('RGBA', (32, 32), color=(0, 0, 255, 255))
+                # 如果所有方法都失败，使用简单的纯色图标
+                return Image.new('RGBA', (32, 32), color=(103, 80, 164, 255))
         
         def on_quit(icon, item):
             icon.stop()
