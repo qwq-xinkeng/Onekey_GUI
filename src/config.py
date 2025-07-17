@@ -13,6 +13,7 @@ DEFAULT_CONFIG = {
     "Custom_Steam_Path": "",
     "Debug_Mode": False,
     "Logging_Files": True,
+    "Show_Console": True,
     "Help": "Github Personal Token可在GitHub设置的Developer settings中生成",
 }
 
@@ -54,6 +55,7 @@ class ConfigManager:
                 custom_steam_path=self._config_data.get("Custom_Steam_Path", ""),
                 debug_mode=self._config_data.get("Debug_Mode", False),
                 logging_files=self._config_data.get("Logging_Files", True),
+                show_console=self._config_data.get("Show_Console", True),
             )
 
             self.steam_path = self._get_steam_path()

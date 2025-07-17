@@ -53,14 +53,27 @@ class WebOnekeyApp:
             self._add_progress_handler()
             
             # 执行解锁任务
-            await self.onekey_app.run_with_tool(app_id, tool_type, version_lock)
+            result = await self.onekey_app.run_with_tool(app_id, tool_type, version_lock)
             
-            self.task_status = "completed"
-            self.task_result = {"success": True, "message": "游戏解锁配置成功！重启Steam后生效"}
+            if result:
+                self.task_status = "completed"
+                self.task_result = {"success": True, "message": "游戏解锁配置成功！重启Steam后生效"}
+            else:
+                self.task_status = "error"
+                self.task_result = {"success": False, "message": "配置失败"}
             
         except Exception as e:
             self.task_status = "error"
             self.task_result = {"success": False, "message": f"配置失败: {str(e)}"}
+        finally:
+            # 确保应用资源被清理
+            if hasattr(self, 'onekey_app') and self.onekey_app:
+                try:
+                    if hasattr(self.onekey_app, 'client'):
+                        await self.onekey_app.client.close()
+                except:
+                    pass
+            self.onekey_app = None
     
     def _add_progress_handler(self):
         """添加进度处理器"""
@@ -151,12 +164,13 @@ def start_unlock():
     
     # 在新线程中运行异步任务
     def run_task():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(web_app.run_unlock_task(app_id_list[0], tool_type, version_lock))
-        finally:
-            loop.close()
+            # 使用 asyncio.run() 更安全地运行异步任务
+            asyncio.run(web_app.run_unlock_task(app_id_list[0], tool_type, version_lock))
+        except Exception as e:
+            # 如果任务执行失败，更新状态
+            web_app.task_status = "error"
+            web_app.task_result = {"success": False, "message": f"任务执行失败: {str(e)}"}
     
     thread = threading.Thread(target=run_task)
     thread.daemon = True
@@ -200,6 +214,7 @@ def update_config():
             "Custom_Steam_Path": data.get('steam_path', ''),
             "Debug_Mode": data.get('debug_mode', False),
             "Logging_Files": data.get('logging_files', True),
+            "Show_Console": data.get('show_console', True),
             "Help": "Github Personal Token可在GitHub设置的Developer settings中生成"
         }
         
@@ -246,6 +261,7 @@ def get_detailed_config():
                 "steam_path": str(config.steam_path) if config.steam_path else "",
                 "debug_mode": config.app_config.debug_mode,
                 "logging_files": config.app_config.logging_files,
+                "show_console": config.app_config.show_console,
                 "has_token": bool(config.app_config.github_token),
                 "steam_path_exists": config.steam_path.exists() if config.steam_path else False
             }

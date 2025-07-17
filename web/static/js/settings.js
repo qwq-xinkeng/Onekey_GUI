@@ -85,6 +85,7 @@ class SettingsManager {
         document.getElementById('steamPath').value = this.currentConfig.steam_path || '';
         document.getElementById('debugMode').checked = this.currentConfig.debug_mode || false;
         document.getElementById('loggingFiles').checked = this.currentConfig.logging_files !== false;
+        document.getElementById('showConsole').checked = this.currentConfig.show_console !== false;
 
         // 验证字段
         this.validateSteamPath();
@@ -97,7 +98,8 @@ class SettingsManager {
                 github_token: document.getElementById('githubToken').value.trim(),
                 steam_path: document.getElementById('steamPath').value.trim(),
                 debug_mode: document.getElementById('debugMode').checked,
-                logging_files: document.getElementById('loggingFiles').checked
+                logging_files: document.getElementById('loggingFiles').checked,
+                show_console: document.getElementById('showConsole').checked
             };
 
             const response = await fetch('/api/config/update', {

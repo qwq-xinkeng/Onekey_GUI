@@ -33,3 +33,4 @@ class AppConfig:
     custom_steam_path: str = ""
     debug_mode: bool = False
     logging_files: bool = True
+    show_console: bool = True
