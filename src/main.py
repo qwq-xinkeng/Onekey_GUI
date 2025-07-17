@@ -68,6 +68,11 @@ class OnekeyApp:
         tree_res = await self.client.get(tree_url)
         tree_res.raise_for_status()
 
+        # 检查Steam路径是否可用
+        if not self.config.steam_path:
+            self.logger.error("Steam路径未配置或无效，无法处理仓库文件")
+            return depot_list, depot_map
+
         depot_cache = self.config.steam_path / "depotcache"
         depot_cache.mkdir(exist_ok=True)
 
@@ -115,6 +120,11 @@ class OnekeyApp:
 
             if not depot_data:
                 self.logger.error("未找到此游戏的清单")
+                return
+
+            # 检查Steam路径是否可用
+            if not self.config.steam_path:
+                self.logger.error("Steam路径未配置或无效，无法继续")
                 return
 
             print("\n请选择解锁工具:")
@@ -168,6 +178,11 @@ class OnekeyApp:
 
             if not depot_data:
                 self.logger.error("未找到此游戏的清单")
+                return False
+
+            # 检查Steam路径是否可用
+            if not self.config.steam_path:
+                self.logger.error("Steam路径未配置或无效，无法继续")
                 return False
 
             self.logger.info(f"选择的解锁工具: {tool_type}")

@@ -13,7 +13,7 @@ DEFAULT_CONFIG = {
     "Custom_Steam_Path": "",
     "Debug_Mode": False,
     "Logging_Files": True,
-    "Show_Console": True,
+    "Show_Console": False,
     "Help": "Github Personal Token可在GitHub设置的Developer settings中生成",
 }
 
@@ -42,9 +42,8 @@ class ConfigManager:
         """加载配置文件"""
         if not self.config_path.exists():
             self._generate_config()
-            print("请填写配置文件后重新运行程序，5秒后退出")
-            time.sleep(5)
-            sys.exit(1)
+            print("配置文件已生成，使用默认配置继续运行")
+            # 不再退出程序，而是继续使用默认配置
 
         try:
             with open(self.config_path, "r", encoding="utf-8") as f:
@@ -63,12 +62,36 @@ class ConfigManager:
         except json.JSONDecodeError:
             print("配置文件损坏，正在重新生成...")
             self._generate_config()
-            sys.exit(1)
+            print("配置文件已重新生成，使用默认配置继续运行")
+            # 使用默认配置继续运行
+            self.app_config = AppConfig(
+                github_token=DEFAULT_CONFIG.get("Github_Personal_Token", ""),
+                custom_steam_path=DEFAULT_CONFIG.get("Custom_Steam_Path", ""),
+                debug_mode=DEFAULT_CONFIG.get("Debug_Mode", False),
+                logging_files=DEFAULT_CONFIG.get("Logging_Files", True),
+                show_console=DEFAULT_CONFIG.get("Show_Console", True),
+            )
+            try:
+                self.steam_path = self._get_steam_path()
+            except:
+                self.steam_path = None
         except Exception as e:
             print(f"配置加载失败: {str(e)}")
-            sys.exit(1)
+            print("使用默认配置继续运行")
+            # 使用默认配置继续运行
+            self.app_config = AppConfig(
+                github_token=DEFAULT_CONFIG.get("Github_Personal_Token", ""),
+                custom_steam_path=DEFAULT_CONFIG.get("Custom_Steam_Path", ""),
+                debug_mode=DEFAULT_CONFIG.get("Debug_Mode", False),
+                logging_files=DEFAULT_CONFIG.get("Logging_Files", True),
+                show_console=DEFAULT_CONFIG.get("Show_Console", True),
+            )
+            try:
+                self.steam_path = self._get_steam_path()
+            except:
+                self.steam_path = None
 
-    def _get_steam_path(self) -> Path:
+    def _get_steam_path(self) -> Optional[Path]:
         """获取Steam安装路径"""
         try:
             if self.app_config.custom_steam_path:
@@ -80,7 +103,8 @@ class ConfigManager:
                 return Path(winreg.QueryValueEx(key, "SteamPath")[0])
         except Exception as e:
             print(f"Steam路径获取失败: {str(e)}")
-            sys.exit(1)
+            print("程序将继续运行，但部分功能可能不可用")
+            return None
 
     @property
     def github_headers(self) -> Optional[Dict[str, str]]:
